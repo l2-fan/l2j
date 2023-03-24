@@ -3,13 +3,13 @@ package l2s.gameserver.botscript.bypasshandler;
 import l2s.gameserver.botscript.BotConfigImp;
 import l2s.gameserver.botscript.BotControlPage;
 import l2s.gameserver.core.BotEngine;
-import l2s.gameserver.core.TimerManager;
 import l2s.gameserver.core.TransactionBankCount;
-import l2s.gameserver.dao.TransactionBankDao;
+import l2s.gameserver.core.TransactionBankExchangeLog;
 import l2s.gameserver.handler.bypass.Bypass;
 import l2s.gameserver.model.Player;
 import l2s.gameserver.model.instances.NpcInstance;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 
 public class BotTransactionBank {
@@ -44,8 +44,7 @@ public class BotTransactionBank {
         }
     }
     @Bypass(value = "bot.defineExchange")
-    public void defineExchange(Player player, NpcInstance npc, String[] param)
-    {
+    public void defineExchange(Player player, NpcInstance npc, String[] param) throws IOException {
 //        TimerManager.getInstance().rateRenewTime(false,null,player);
 //        TimerManager.getInstance().time =10;
 //        TimerManager.getInstance().rateRenewTime(true,"chooseGoldExchange",player);
@@ -62,7 +61,7 @@ public class BotTransactionBank {
                 player.getInventory().addItem(57,Long.parseLong(replace));
                 TransactionBankCount.getInstance().update("chooseGoldExchange",replace);
                 player.sendMessage("成功兑换"+BotControlPage.numFormat(Long.parseLong(replace))+"金币");
-
+                TransactionBankExchangeLog.getInstance().printLog(player,BotControlPage.numFormat(Long.parseLong(replace)),"chooseGoldExchange");
                 BotControlPage.chooseExchange(player,"chooseGoldExchange");
             }
         }else if(param.length > 0 && param[0].equals("\u8d5e\u52a9\u5e01")){
@@ -78,6 +77,7 @@ public class BotTransactionBank {
                 player.getInventory().addItem(29520,30L);
                 TransactionBankCount.getInstance().update("chooseVipGoldExchange",replace);
                 player.sendMessage("成功兑换30赞助币");
+                TransactionBankExchangeLog.getInstance().printLog(player, "30赞助币","");
 //                TimerManager.getInstance().rateRenewTime(true,"chooseVipGoldExchange",player);
                 BotControlPage.chooseExchange(player,"chooseVipGoldExchange");
             }
